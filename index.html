@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صندوق الفضفضة الكوني 🌌</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --space-bg: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
+            --accent-blue: #4a90e2;
+            --accent-red: #e94b3c;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background: var(--space-bg);
+            color: white;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #star-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        h1 { font-weight: 700; margin-bottom: 10px; font-size: 1.8rem; }
+        p { font-weight: 300; opacity: 0.8; margin-bottom: 30px; }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: white;
+            padding: 20px;
+            font-size: 1.1rem;
+            resize: none;
+            outline: none;
+            transition: 0.3s;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        textarea:focus {
+            border-color: var(--accent-blue);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 28px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-space { background: var(--accent-blue); color: white; }
+        .btn-destroy { background: var(--accent-red); color: white; }
+
+        button:hover { transform: translateY(-3px); opacity: 0.9; }
+
+        /* توقيعكِ الخاص */
+        .signature {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            font-size: 0.9rem;
+            opacity: 0.5;
+            letter-spacing: 2px;
+            font-weight: 300;
+            z-index: 100;
+            transition: 0.5s;
+        }
+
+        .signature:hover {
+            opacity: 1;
+            text-shadow: 0 0 10px var(--accent-blue);
+        }
+
+        .shooting-star {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 100;
+            text-shadow: 0 0 10px #fff;
+            animation: flyAway 2.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+        }
+
+        @keyframes flyAway {
+            0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translate(800px, -800px) scale(0.1) rotate(20deg); opacity: 0; }
+        }
+
+        #mute-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg">
+    </audio>
+    
+    <button id="mute-btn" onclick="toggleMusic()">🔇</button>
+
+    <div id="star-container"></div>
+
+    <div class="container">
+        <h1>صندوق الفضفضة الكوني 🌌</h1>
+        <p>اكتبي ما يثقل قلبكِ.. ودعي المجرّة تحمله بعيداً</p>
+        
+        <textarea id="ventInput" placeholder="اكتبي هنا ما يزعجكِ..."></textarea>
+        
+        <div class="buttons">
+            <button onclick="sendToSpace()" class="btn-space">إرسال للشهب ☄️</button>
+            <button onclick="destroyWorry()" class="btn-destroy">تدمير الهم 💥</button>
+        </div>
+    </div>
+
+    <div class="signature">asraj_209</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+    <script>
+        const music = document.getElementById('bg-music');
+        const input = document.getElementById('ventInput');
+        const starContainer = document.getElementById('star-container');
+
+        // إنشاء النجوم
+        for (let i = 0; i < 150; i++) {
+            const star = document.createElement('div');
+            const size = Math.random() * 3 + 'px';
+            star.style.position = 'absolute';
+            star.style.width = size;
+            star.style.height = size;
+            star.style.background = 'white';
+            star.style.borderRadius = '50%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.opacity = Math.random();
+            starContainer.appendChild(star);
+        }
+
+        function toggleMusic() {
+            if (music.paused) {
+                music.play();
+                document.getElementById('mute-btn').innerText = '🔊';
+            } else {
+                music.pause();
+                document.getElementById('mute-btn').innerText = '🔇';
+            }
+        }
+
+        function sendToSpace() {
+            const text = input.value.trim();
+            if (!text) return;
+
+            if (music.paused) music.play();
+
+            const starText = document.createElement('div');
+            starText.className = 'shooting-star';
+            starText.innerText = text;
+            starText.style.left = '50%';
+            starText.style.top = '50%';
+            document.body.appendChild(starText);
+
+            // تذكري استبدال YOUR_ID بالرابط الخاص بكِ من Formspree
+            fetch('https://formspree.io/f/mdayreoe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ "الفضفضة": text, "بواسطة": "asraj_209" })
+            });
+
+            input.value = '';
+            setTimeout(() => starText.remove(), 2500);
+        }
+
+        function destroyWorry() {
+            if (!input.value.trim()) return;
+
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#e94b3c', '#ffffff']
+            });
+
+            input.value = '';
+        }
+    </script>
+</body>
+</html>
